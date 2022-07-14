@@ -1,4 +1,5 @@
 class BooksController < ApplicationController
+before_action  :authenticate_user!
 
    def create
     @book = Book.new(book_params)
@@ -24,17 +25,24 @@ class BooksController < ApplicationController
 
   def edit
     @book = Book.find(params[:id])
+    if @book.user == current_user
+       render:edit
+    else
+        redirect_to books_path
+    end
   end
 
   def update
     @book = Book.find(params[:id])
-    if @book.update(book_params)
-    redirect_to book_path
-    flash[:notice] = "Book was updated."
-    else
-    render:edit
-    end
+     if @book.update(book_params)
+        redirect_to book_path
+        flash[:notice] = "Book was successfully updated."
+     else
+        render:edit
+     end
   end
+
+
 
   def destroy
     @book = Book.find(params[:id])  # データ（レコード）を1件取得
